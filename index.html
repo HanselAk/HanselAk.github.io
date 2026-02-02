@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered senior design project advisor with intelligent feasibility analysis and market insights">
+    <meta name="keywords" content="senior design, computer engineering, project ideation, AI advisor, feasibility analysis">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <title>SENIORDESIGN.SYS v2.1 - Project Advisor Terminal</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- CRT Screen Effect Overlay -->
+    <div class="crt-overlay"></div>
+    <div class="scanlines"></div>
+    
+    <!-- Boot Sequence (shown on first load) -->
+    <div id="bootSequence" class="boot-sequence hidden">
+        <div class="boot-content">
+            <pre class="boot-text">
+SENIORDESIGN.SYS v2.1.0
+Copyright (c) 2026 Engineering Intelligence Systems
+
+Loading system modules...
+[██████████████████████████████] 100%
+
+Initializing AI advisor kernel...........OK
+Loading project database.................OK
+Connecting to Claude API.................OK
+Mounting feasibility analyzer............OK
+Starting market intelligence module......OK
+
+System ready.
+
+Press ANY KEY to continue...
+            </pre>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="mainContainer" class="container">
+        <!-- Terminal Header -->
+        <header class="terminal-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <span class="blink">●</span> SENIORDESIGN.SYS v2.1
+                </div>
+                <div class="header-right">
+                    <span id="currentTime"></span> | <span id="systemStatus">ONLINE</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content">
+            <!-- Dashboard View (Default) -->
+            <div id="dashboardView" class="view active">
+                <div class="ascii-banner">
+                    <pre>
+ ___  ___  _  _  ___  ___  ___    ___  ___  ___  ___  ___  _  _ 
+/ __|/ _ \| \| ||_ _|/ _ \| _ \  |   \| __/ __|_ _/ __|| \| |
+\__ \  __/| .` | | || (_) |   /  | |) | _|\__ \| | (_ || .` |
+|___/\___||_|\_||___|\___/|_|_\  |___/|___|___/___\___||_|\_|
+                                                               
+    AI-Powered Project Advisor for Computer Engineering
+                    </pre>
+                </div>
+
+                <div class="menu-container">
+                    <div class="menu-section">
+                        <h2 class="section-title">═══ MAIN MENU ═══</h2>
+                        <div class="menu-options">
+                            <button class="menu-btn" onclick="showWizard()">
+                                <span class="menu-key">[N]</span> NEW PROJECT WIZARD
+                            </button>
+                            <button class="menu-btn" onclick="showSavedProjects()">
+                                <span class="menu-key">[L]</span> LOAD SAVED PROJECT
+                            </button>
+                            <button class="menu-btn" onclick="showComparison()">
+                                <span class="menu-key">[C]</span> COMPARE PROJECTS
+                            </button>
+                            <button class="menu-btn" onclick="showSettings()">
+                                <span class="menu-key">[S]</span> SYSTEM SETTINGS
+                            </button>
+                            <button class="menu-btn" onclick="showAbout()">
+                                <span class="menu-key">[A]</span> ABOUT
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-panels">
+                        <div class="panel">
+                            <div class="panel-header">RECENT PROJECTS</div>
+                            <div class="panel-content" id="recentProjects">
+                                <div class="empty-state">No projects yet. Start with [N]ew Project.</div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel-header">SYSTEM STATUS</div>
+                            <div class="panel-content">
+                                <div class="status-item">
+                                    <span class="status-label">API Connection:</span>
+                                    <span class="status-value" id="apiStatus">
+                                        <span class="indicator-dot">●</span> NOT CONFIGURED
+                                    </span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">Projects Analyzed:</span>
+                                    <span class="status-value" id="projectCount">0</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">Cache Status:</span>
+                                    <span class="status-value">EMPTY</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-text">
+                    Press corresponding key or click to select | ESC to return to menu
+                </div>
+            </div>
+
+            <!-- Project Wizard View -->
+            <div id="wizardView" class="view">
+                <div class="view-header">
+                    <h2>NEW PROJECT WIZARD</h2>
+                    <button class="back-btn" onclick="showDashboard()">← BACK [ESC]</button>
+                </div>
+
+                <div class="wizard-container">
+                    <!-- Step Indicator -->
+                    <div class="wizard-steps">
+                        <div class="step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">API CONFIG</span>
+                        </div>
+                        <div class="step-connector">────</div>
+                        <div class="step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">CONSTRAINTS</span>
+                        </div>
+                        <div class="step-connector">────</div>
+                        <div class="step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">GENERATION</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: API Configuration -->
+                    <div id="wizardStep1" class="wizard-step active">
+                        <div class="step-content">
+                            <h3 class="step-title">STEP 1: API CONFIGURATION</h3>
+                            <div class="form-group">
+                                <label class="form-label">ANTHROPIC API KEY</label>
+                                <input 
+                                    type="password" 
+                                    id="apiKey" 
+                                    class="form-input" 
+                                    placeholder="sk-ant-..."
+                                    autocomplete="off"
+                                >
+                                <div class="form-hint">
+                                    Get your API key at: https://console.anthropic.com/
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">AI MODEL</label>
+                                <select id="aiModel" class="form-select">
+                                    <option value="claude-sonnet-4-20250514">CLAUDE SONNET 4 (Recommended - Balanced)</option>
+                                    <option value="claude-opus-4-20250514">CLAUDE OPUS 4 (Most Capable)</option>
+                                    <option value="claude-haiku-4-20250514">CLAUDE HAIKU 4 (Fastest)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn-primary" onclick="nextWizardStep()">
+                                    CONTINUE → [ENTER]
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Project Constraints -->
+                    <div id="wizardStep2" class="wizard-step">
+                        <div class="step-content">
+                            <h3 class="step-title">STEP 2: PROJECT CONSTRAINTS</h3>
+                            
+                            <div class="constraints-grid">
+                                <div class="form-group">
+                                    <label class="form-label">TEAM SIZE</label>
+                                    <div class="number-input">
+                                        <button class="num-btn" onclick="adjustValue('teamSize', -1)">−</button>
+                                        <input type="number" id="teamSize" class="form-input-num" value="3" min="1" max="6">
+                                        <button class="num-btn" onclick="adjustValue('teamSize', 1)">+</button>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">PROJECT DURATION</label>
+                                    <select id="duration" class="form-select">
+                                        <option value="1">1 Semester</option>
+                                        <option value="2" selected>2 Semesters</option>
+                                        <option value="3">3 Semesters</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">BUDGET RANGE</label>
+                                    <select id="budget" class="form-select">
+                                        <option value="$0 - $200">$0 - $200 (Minimal)</option>
+                                        <option value="$200 - $500" selected>$200 - $500 (Standard)</option>
+                                        <option value="$500 - $800">$500 - $800 (Enhanced)</option>
+                                        <option value="$800 - $1,200">$800 - $1,200 (Advanced)</option>
+                                        <option value="$1,200+">$1,200+ (Premium)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">COMPLEXITY LEVEL</label>
+                                    <select id="complexity" class="form-select">
+                                        <option value="Beginner">Beginner - Learning Focus</option>
+                                        <option value="Intermediate" selected>Intermediate - Balanced</option>
+                                        <option value="Advanced">Advanced - Research Grade</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    HARDWARE / SOFTWARE EMPHASIS
+                                    <span id="hwSwRatioDisplay">50% HW / 50% SW</span>
+                                </label>
+                                <input 
+                                    type="range" 
+                                    id="hwSwRatio" 
+                                    class="slider" 
+                                    min="0" 
+                                    max="100" 
+                                    value="50"
+                                    oninput="updateHwSwDisplay(this.value)"
+                                >
+                                <div class="slider-labels">
+                                    <span>100% Software</span>
+                                    <span>100% Hardware</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">TECHNOLOGY PREFERENCES</label>
+                                <div class="tech-badges" id="techBadges">
+                                    <button class="tech-badge" data-tech="AI/ML">AI/ML</button>
+                                    <button class="tech-badge" data-tech="IoT">IoT</button>
+                                    <button class="tech-badge" data-tech="Embedded Systems">Embedded Systems</button>
+                                    <button class="tech-badge" data-tech="Web Development">Web Development</button>
+                                    <button class="tech-badge" data-tech="Mobile Development">Mobile Development</button>
+                                    <button class="tech-badge" data-tech="Robotics">Robotics</button>
+                                    <button class="tech-badge" data-tech="Computer Vision">Computer Vision</button>
+                                    <button class="tech-badge" data-tech="Cybersecurity">Cybersecurity</button>
+                                    <button class="tech-badge" data-tech="Signal Processing">Signal Processing</button>
+                                    <button class="tech-badge" data-tech="Control Systems">Control Systems</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">PROBLEM STATEMENT (OPTIONAL)</label>
+                                <textarea 
+                                    id="problemStatement" 
+                                    class="form-textarea" 
+                                    rows="4" 
+                                    placeholder="Describe a specific problem you want to solve or domain you want to explore..."
+                                ></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn-secondary" onclick="prevWizardStep()">
+                                    ← BACK
+                                </button>
+                                <button class="btn-primary" onclick="nextWizardStep()">
+                                    GENERATE IDEAS → [ENTER]
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Idea Generation & Results -->
+                    <div id="wizardStep3" class="wizard-step">
+                        <div class="step-content">
+                            <h3 class="step-title">STEP 3: IDEA GENERATION</h3>
+                            
+                            <!-- Loading State -->
+                            <div id="generationLoading" class="loading-state">
+                                <div class="loading-animation">
+                                    <pre id="loadingBar">
+[░░░░░░░░░░░░░░░░░░░░] 0%
+                                    </pre>
+                                </div>
+                                <div id="loadingStatus" class="loading-status">
+                                    Initializing AI advisor...
+                                </div>
+                            </div>
+
+                            <!-- Results State -->
+                            <div id="generationResults" class="results-container hidden">
+                                <div class="results-header">
+                                    <div class="results-count">
+                                        Generated <span id="ideaCount">0</span> project ideas
+                                    </div>
+                                </div>
+
+                                <div id="ideaCards" class="idea-cards">
+                                    <!-- Dynamically populated -->
+                                </div>
+
+                                <div class="form-actions">
+                                    <button class="btn-secondary" onclick="prevWizardStep()">
+                                        ← REGENERATE
+                                    </button>
+                                    <button class="btn-primary" onclick="showDashboard()">
+                                        SAVE & CONTINUE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Detail View -->
+            <div id="detailView" class="view">
+                <div class="view-header">
+                    <h2 id="detailProjectTitle">PROJECT ANALYSIS</h2>
+                    <button class="back-btn" onclick="showDashboard()">← BACK [ESC]</button>
+                </div>
+
+                <div class="detail-container">
+                    <!-- Tab Navigation -->
+                    <div class="detail-tabs">
+                        <button class="tab-btn active" onclick="showTab('overview')">OVERVIEW</button>
+                        <button class="tab-btn" onclick="showTab('market')">MARKET</button>
+                        <button class="tab-btn" onclick="showTab('feasibility')">FEASIBILITY</button>
+                        <button class="tab-btn" onclick="showTab('components')">COMPONENTS</button>
+                        <button class="tab-btn" onclick="showTab('timeline')">TIMELINE</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div id="detailContent" class="detail-content">
+                        <!-- Dynamically populated based on selected project -->
+                    </div>
+
+                    <div class="detail-actions">
+                        <button class="btn-secondary" onclick="analyzeProject()">
+                            🔍 DEEP ANALYSIS
+                        </button>
+                        <button class="btn-secondary" onclick="exportProject()">
+                            📄 EXPORT PDF
+                        </button>
+                        <button class="btn-primary" onclick="saveProject()">
+                            💾 SAVE PROJECT
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settingsView" class="view">
+                <div class="view-header">
+                    <h2>SYSTEM SETTINGS</h2>
+                    <button class="back-btn" onclick="showDashboard()">← BACK [ESC]</button>
+                </div>
+
+                <div class="settings-container">
+                    <div class="panel">
+                        <div class="panel-header">API CONFIGURATION</div>
+                        <div class="panel-content">
+                            <div class="form-group">
+                                <label class="form-label">API KEY</label>
+                                <input type="password" id="settingsApiKey" class="form-input" placeholder="sk-ant-...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">DEFAULT MODEL</label>
+                                <select id="settingsModel" class="form-select">
+                                    <option value="claude-sonnet-4-20250514">Claude Sonnet 4</option>
+                                    <option value="claude-opus-4-20250514">Claude Opus 4</option>
+                                    <option value="claude-haiku-4-20250514">Claude Haiku 4</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">DISPLAY OPTIONS</div>
+                        <div class="panel-content">
+                            <div class="form-group">
+                                <label class="form-label">CRT EFFECT</label>
+                                <select id="crtEffect" class="form-select" onchange="toggleCRTEffect()">
+                                    <option value="on">ENABLED</option>
+                                    <option value="off">DISABLED</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">COLOR SCHEME</label>
+                                <select id="colorScheme" class="form-select" onchange="changeColorScheme()">
+                                    <option value="green">GREEN PHOSPHOR</option>
+                                    <option value="amber">AMBER MONITOR</option>
+                                    <option value="white">IBM TERMINAL</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">DATA MANAGEMENT</div>
+                        <div class="panel-content">
+                            <button class="btn-secondary" onclick="exportAllData()">EXPORT ALL PROJECTS</button>
+                            <button class="btn-secondary" onclick="importData()">IMPORT DATA</button>
+                            <button class="btn-danger" onclick="clearAllData()">CLEAR ALL DATA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Terminal Footer -->
+        <footer class="terminal-footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    SENIORDESIGN.SYS © 2026 | Powered by Claude AI
+                </div>
+                <div class="footer-right">
+                    <span class="cursor-blink">█</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
